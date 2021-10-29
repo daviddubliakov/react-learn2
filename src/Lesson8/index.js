@@ -11,7 +11,7 @@ import { Box, Table, TableHead, TableRow, TableCell, TableBody, TextField, Radio
 import { Typography } from 'antd';
 import { CodeSharp } from '@mui/icons-material';
 import { number } from 'yup';
-// import useStyles from './styles';
+import useStyles from './styles';
 
 
 
@@ -1409,90 +1409,76 @@ import { number } from 'yup';
 //   )
 // }
 
-const CURRENCY_FROM = [
+const CURRENCY_FROOM = [
   {
     id: 1,
-    dollar: 0.038,
+    coefficient: 0.038,
     name: 'UA'
   },
   {
     id: 2,
-    dollar: 0.014,
+    coefficient: 0.014,
     name: 'RUB'
   },
   {
     id: 3,
-    dollar: 1,
+    coefficient: 1,
     name: 'USA'
   }
 ]
 const CURRENCY_TO = [
   {
     id: 1,
-    dollar: 26.44,
+    coefficient: 26.44,
     name: 'UA'
   },
   {
     id: 2,
-    dollar: 71.21,
+    coefficient: 71.21,
     name: 'RUB',
   },
   {
     id: 3,
-    dollar: 1,
+    coefficient: 1,
     name: 'USA',
   }
 ]
 
 const Task15Func = () => {
+  const currencysNumber = useRef(null)
+
   const [currencies, setCurrencys] = useState({
-    from: {
-      id: 1,
-      value: 0.038
-    },
-    to: {
-      id: 3,
-      value: 1
-    },
-    value: {
-      from: 0.038,
-      to: 1
+    froom: 0.038,
+    to: 1,
+    name: {
+      froom: 'UA',
+      to: 'USA'
     },
     currency: null
   })
 
-  const currencysNumber = useRef(null)
 
-  const handleSelect = (event, field) => {
+  const handleSelect = (event) => {
     const copyCurrencys = { ...currencies };
 
-    copyCurrencys.value[field] = event.target.value;
-
-    copyCurrencys.value[field] = event.target.value;
-
-    copyCurrencys[field].value = event.target.value;
-
-    copyCurrencys[field].value = event.target.value;
-
-
+    copyCurrencys.name[event.target.name] = event.target.value;
+    copyCurrencys[event.target.name] =
+      ((event.target.name = 'froom' ? CURRENCY_FROOM : CURRENCY_TO).find(item => {
+        if (item.name === event.target.value) {
+          return true
+        }
+      })).coefficient;
+    console.log(copyCurrencys);
+    console.log(currencies);
     setCurrencys(copyCurrencys);
-  }
-
-  const getKey = (key, field) => {
-    const copyCurrencys = { ...currencies };
-
-    copyCurrencys[field].id = key;
-
-    copyCurrencys[field].id = key;
-
   }
 
   const calculateCurrency = () => {
     const copyCurrencys = { ...currencies };
 
-    if (currencies.from.id != currencies.to.id) {
+    if (currencies.name.froom !== currencies.name.to) {
 
-      const currency = Number(currencysNumber.current.value) * currencies.from.value * currencies.to.value;
+      const currency = Number(currencysNumber.current.value) * currencies.froom * currencies.to;
 
       copyCurrencys.currency = Number(currency.toFixed(2));
       setCurrencys(copyCurrencys);
@@ -1500,20 +1486,23 @@ const Task15Func = () => {
 
   }
 
-
+  const classes = useStyles()
   return (
-    <Box>
-      <TextField type='number' variant='standard' inputRef={currencysNumber} />
+    <Box className={classes.root}>
+      <TextField
+        type="number"
+        variant="standard"
+        inputRef={currencysNumber}
+      />
       <Select
-        name="from"
-        onChange={(event) => handleSelect(event, 'from')}
-        value={currencies.value.from}
-        variant='standard'>
-        {CURRENCY_FROM.map((currency) =>
+        name="froom"
+        onChange={(event) => handleSelect(event)}
+        value={currencies.name.froom}
+        variant="standard"
+      >
+        {CURRENCY_FROOM.map((currency) =>
           <MenuItem
-            name="froom"
-            onClick={() => getKey(currency.id, 'from')}
-            value={currency.dollar}
+            value={currency.name}
             key={currency.id}
           >
             {currency.name}
@@ -1521,22 +1510,26 @@ const Task15Func = () => {
       </Select>
       <Select
         name="to"
-        onChange={(event) => handleSelect(event, 'to')}
-        value={currencies.value.to}
-        variant='standard'
+        onChange={(event) => handleSelect(event)}
+        value={currencies.name.to}
+        variant="standard"
       >
         {CURRENCY_TO.map((currency) =>
           <MenuItem
-            name="to"
-            onClick={() => getKey(currency.id, 'to')}
-            value={currency.dollar}
+            value={currency.name}
             key={currency.id}
           >
             {currency.name}
           </MenuItem>)}
       </Select>
-      <Button onClick={calculateCurrency}>Конвертировать</Button>
-      <Typography>{currencies.currency}</Typography>
+      <Button
+        onClick={calculateCurrency}
+      >
+        Конвертировать
+      </Button>
+      <Typography>
+        {currencies.currency}
+      </Typography>
     </Box>
   )
 }
