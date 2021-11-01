@@ -16,7 +16,6 @@ const useStyles = createUseStyles({
     backgroundColor: 'silver',
     textAlign: 'center',
     borderRadius: 15,
-    color: 'yellow'
   }
 })
 

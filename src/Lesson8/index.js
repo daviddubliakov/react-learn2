@@ -1409,7 +1409,7 @@ import useStyles from './styles';
 //   )
 // }
 
-const CURRENCY_FROOM = [
+const CURRENCY_FROM = [
   {
     id: 1,
     coefficient: 0.038,
@@ -1445,13 +1445,15 @@ const CURRENCY_TO = [
 ]
 
 const Task15Func = () => {
+  const classes = useStyles()
+
   const currencysNumber = useRef(null)
 
   const [currencies, setCurrencys] = useState({
-    froom: 0.038,
+    from: 0.038,
     to: 1,
     name: {
-      froom: 'UA',
+      from: 'UA',
       to: 'USA'
     },
     currency: null
@@ -1463,22 +1465,18 @@ const Task15Func = () => {
 
     copyCurrencys.name[event.target.name] = event.target.value;
     copyCurrencys[event.target.name] =
-      ((event.target.name = 'froom' ? CURRENCY_FROOM : CURRENCY_TO).find(item => {
-        if (item.name === event.target.value) {
-          return true
-        }
-      })).coefficient;
-    console.log(copyCurrencys);
-    console.log(currencies);
+      (event.target.name === 'from' ? CURRENCY_FROM : CURRENCY_TO).find(item => (
+        item.name === event.target.value)
+      ).coefficient;
     setCurrencys(copyCurrencys);
   }
 
   const calculateCurrency = () => {
     const copyCurrencys = { ...currencies };
 
-    if (currencies.name.froom !== currencies.name.to) {
+    if (currencies.name.from !== currencies.name.to) {
 
-      const currency = Number(currencysNumber.current.value) * currencies.froom * currencies.to;
+      const currency = Number(currencysNumber.current.value) * currencies.from * currencies.to;
 
       copyCurrencys.currency = Number(currency.toFixed(2));
       setCurrencys(copyCurrencys);
@@ -1486,7 +1484,6 @@ const Task15Func = () => {
 
   }
 
-  const classes = useStyles()
   return (
     <Box className={classes.root}>
       <TextField
@@ -1495,12 +1492,12 @@ const Task15Func = () => {
         inputRef={currencysNumber}
       />
       <Select
-        name="froom"
+        name="from"
         onChange={(event) => handleSelect(event)}
-        value={currencies.name.froom}
+        value={currencies.name.from}
         variant="standard"
       >
-        {CURRENCY_FROOM.map((currency) =>
+        {CURRENCY_FROM.map((currency) =>
           <MenuItem
             value={currency.name}
             key={currency.id}
